@@ -3,7 +3,7 @@
 @import "ember-power-datepicker";
 
 @import "datepicker";
-// @import "task";
+@import "task";
 
 $body-font: "Helvetica Neue", Helvetica, Arial, sans-serif;
 $body-font-size: 10pt;
@@ -11,8 +11,7 @@ $body-font-size: 10pt;
 $body-background-color: #23A08D;
 $list-background-color: #E3E3E3;
 
-$top-bar-height: 2.5em;
-$navbar-height: 1px;
+$top-bar-height: 3em;
 $list-width: 22em;
 $gap: 0.5em;
 $list-header-height: 3em;
@@ -36,10 +35,14 @@ body {
   height: 100vh;
 }
 
-.top-nav, .middle-nav {
+.top-nav {
   align-items: center;
   display: flex;
   padding-left: $gap;
+
+  > * {
+    margin-right: 0.25em;
+  }
 }
 
 .lists {
@@ -56,7 +59,7 @@ body {
 }
 
 .task-list {
-  height: calc(100% - #{$gap} - #{$scrollbar-thickness});
+  height: calc(100% - (4 * #{$gap}) - #{$scrollbar-thickness});
   width: $list-width;
 
   > * {
@@ -112,7 +115,7 @@ body {
     list-style: none;
     margin: 0;
 
-    max-height: calc(100% - #{$list-header-height});
+    max-height: calc(100% - #{$list-header-height} - #{$list-footer-height});
     overflow-y: auto;
 
     li {
