@@ -1,8 +1,8 @@
-{{#if hasBlock}}
-  <div class="task-list-header">
+<header>
+  {{#if hasBlock}}
     {{yield}}
-  </div>
-{{/if}}
+  {{/if}}
+</header>
 <ul>
   {{#each sortedUnfinishedTasks as |task|}}
     {{draggable-task task=task class="spec-task" editingStart="editingStart" editingEnd="editingEnd"}}
@@ -17,3 +17,4 @@
     {{elastic-textarea class="new-task spec-new-task" value=newTaskDescription placeholder="Add new task" insert-newline="addTask" escape-press=(action 'clearTextarea')}}
   </li>
 </ul>
+<footer></footer>

@@ -3,12 +3,104 @@
 @import "ember-power-datepicker";
 
 @import "datepicker";
-@import "task";
+// @import "task";
 
 $body-font: "Helvetica Neue", Helvetica, Arial, sans-serif;
 $body-font-size: 10pt;
-$body-background-color: #23A08D;
 
+$body-background-color: #23A08D;
+$list-background-color: #E3E3E3;
+
+$top-bar-height: 2.5em;
+$list-width: 22em;
+$gap: 1em;
+$list-header-height: 3em;
+$list-footer-height: 1em;
+$list-border-radius: 5px;
+$scrollbar-thickness: 17px;
+$task-card-border-radius: 3px;
+
+body {
+  font-family: $body-font;
+  font-size: $body-font-size;
+  line-height: 1.3em;
+  margin: 0;
+}
+
+.page-wrapper {
+  height: 100vh;
+
+  display: grid;
+  grid-template-rows: $top-bar-height 1fr;
+
+  background-color: $body-background-color;
+  color: #EEE;
+}
+
+.top-nav {
+  padding-left: $gap;
+  display: flex;
+  align-items: center;
+}
+
+.lists {
+  display: flex;
+  overflow-x: auto;
+  > * {
+    flex: 0 0 auto;
+    margin-left: $gap;
+  }
+  &::after {
+    content: '';
+    flex: 0 0 $gap;
+  }
+}
+
+.task-list {
+  height: calc(100% - #{$gap} - #{$scrollbar-thickness});
+  width: $list-width;
+
+  > * {
+    background-color: $list-background-color;
+    color: #333;
+    padding: 0 $gap;
+  }
+
+  header {
+    line-height: $list-header-height;
+    font-size: 16px;
+    font-weight: bold;
+    border-top-left-radius: $list-border-radius;
+    border-top-right-radius: $list-border-radius;
+  }
+
+  footer {
+    line-height: $list-footer-height;
+    border-bottom-left-radius: $list-border-radius;
+    border-bottom-right-radius: $list-border-radius;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+
+    max-height: calc(100% - #{$list-header-height});
+    overflow-y: auto;
+
+    li {
+      background-color: #FFF;
+      border-radius: $task-card-border-radius;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+      padding: $gap;
+
+      &:not(:last-child) {
+        margin-bottom: $gap;
+      }
+    }
+  }
+}
+
+/*
 body {
   background-color: $body-background-color;
   font-family: $body-font;
@@ -137,3 +229,5 @@ i.fa {
 
   padding: 0 2em 1em 2em;
 }
+
+*/
