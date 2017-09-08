@@ -1,4 +1,4 @@
-<div class="days">
+<div class="lists">
   {{#each days as |day|}}
     {{#day-tasks day=day store=store editingStart="pausePolling" editingEnd="resumePolling"}}
       <h1>{{day-name day.date}}</h1>

@@ -12,8 +12,9 @@ $body-background-color: #23A08D;
 $list-background-color: #E3E3E3;
 
 $top-bar-height: 2.5em;
+$navbar-height: 1px;
 $list-width: 22em;
-$gap: 1em;
+$gap: 0.5em;
 $list-header-height: 3em;
 $list-footer-height: 1em;
 $list-border-radius: 5px;
@@ -28,19 +29,17 @@ body {
 }
 
 .page-wrapper {
-  height: 100vh;
-
-  display: grid;
-  grid-template-rows: $top-bar-height 1fr;
-
   background-color: $body-background-color;
   color: #EEE;
+  display: grid;
+  grid-template-rows: $top-bar-height 1fr;
+  height: 100vh;
 }
 
-.top-nav {
-  padding-left: $gap;
-  display: flex;
+.top-nav, .middle-nav {
   align-items: center;
+  display: flex;
+  padding-left: $gap;
 }
 
 .lists {
@@ -66,12 +65,41 @@ body {
     padding: 0 $gap;
   }
 
+  &.active-drop-target {
+    box-shadow: 0px 0px 15px #333;
+  }
+
+  &.current > * {
+    background-color: #B2DFDA;
+  }
+
+  &.past {
+    li:not(.done) {
+      color: #BF4A40;
+      font-weight: bold;
+    }
+
+    &.has-unfinished-tasks {
+      h1, h2 {
+        color: #BF4A40;
+      }
+    }
+
+    &:not(.has-unfinished-tasks) {
+      opacity: 0.75;
+    }
+  }
+
   header {
     line-height: $list-header-height;
-    font-size: 16px;
     font-weight: bold;
     border-top-left-radius: $list-border-radius;
     border-top-right-radius: $list-border-radius;
+
+    h1, h2 {
+      text-align: center;
+      margin: 0;
+    }
   }
 
   footer {
@@ -101,80 +129,6 @@ body {
 }
 
 /*
-body {
-  background-color: $body-background-color;
-  font-family: $body-font;
-  font-size: $body-font-size;
-
-  &:not(.testing) {
-    overflow: hidden;
-  }
-}
-
-div.page-wrapper {
-  height: 100%;
-  overflow: hidden;
-  width: 100%;
-}
-
-nav.top-nav {
-  height: 2.5em;
-
-  > div {
-    display: inline-block;
-  }
-
-  i {
-    vertical-align: top;
-  }
-}
-
-.task-list {
-  background-color: #e3e3e3;
-  border-radius: 3px;
-  display: inline-block;
-  margin-right: .5em;
-  padding-top: 1em;
-  vertical-align: top;
-  white-space: normal;
-  width: 22em;
-
-  &.active-drop-target {
-    box-shadow: 0px 0px 15px #333;
-  }
-
-  h1, h2 {
-    text-align: center;
-    margin: 0;
-  }
-
-  ul {
-    max-height: calc(100vh - 12em);
-    overflow-y: scroll;
-    padding: .25em;
-  }
-
-  &.current {
-    background-color: #B2DFDA;
-  }
-
-  &.past {
-    li:not(.done) {
-      color: #bf4a40;
-      font-weight: bold;
-    }
-
-    &.has-unfinished-tasks {
-      h1, h2 {
-        color: #bf4a40;
-      }
-    }
-
-    &:not(.has-unfinished-tasks) {
-      opacity: 0.75;
-    }
-  }
-}
 
 .days, .recurring-task-days {
   height: calc(100vh - 3.5em);
@@ -192,6 +146,7 @@ nav.top-nav {
     width: 100%;
   }
 }
+*/
 
 .done {
   color: #666;
@@ -229,5 +184,3 @@ i.fa {
 
   padding: 0 2em 1em 2em;
 }
-
-*/
