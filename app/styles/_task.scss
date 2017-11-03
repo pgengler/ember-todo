@@ -38,13 +38,4 @@
   p {
     margin: 0;
   }
-
-  & > div {
-    display: inline-block;
-    width: calc(100% - 2em);
-
-    p {
-      display: inline;
-    }
-  }
 }

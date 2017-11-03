@@ -68,10 +68,6 @@ body {
     padding: 0 $gap;
   }
 
-  &.active-drop-target {
-    box-shadow: 0px 0px 15px #333;
-  }
-
   &.current > * {
     background-color: #B2DFDA;
   }
@@ -94,10 +90,11 @@ body {
   }
 
   header {
-    line-height: $list-header-height;
+    line-height: calc(#{$list-header-height} - 0.5em);
     font-weight: bold;
     border-top-left-radius: $list-border-radius;
     border-top-right-radius: $list-border-radius;
+    padding: 0.5em 0;
 
     h1, h2 {
       text-align: center;
