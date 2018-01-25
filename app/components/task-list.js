@@ -17,6 +17,7 @@ export default Component.extend(DraggableDropzone, {
   newTaskDescription: '',
   dragClass: '',
 
+  flashMessages: service(),
   store: service(),
 
   sortedTasks: computed('list.tasks.@each.description', function() {
@@ -59,8 +60,12 @@ export default Component.extend(DraggableDropzone, {
       let list = this.get('list');
       let task = this.get('store').createRecord('task', { description, list });
       list.get('tasks').addObject(task);
-      this.set('newTaskDescription', '');
-      next(() => task.save());
+
+      next(() => {
+        task.save()
+          .then(() => this.set('newTaskDescription', ''))
+          .catch((err) => this.get('flashMessages').error(err));
+      });
     },
 
     clearTextarea() {

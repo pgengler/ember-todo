@@ -1,0 +1,10 @@
+.flash-message {
+  margin-left: 5vw;
+  margin-right: 5vw;
+  padding: 15px;
+
+  &.alert {
+    background-color: #bf4a40;
+    color: white;
+  }
+}

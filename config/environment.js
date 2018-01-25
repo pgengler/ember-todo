@@ -22,6 +22,10 @@ module.exports = function(environment) {
       // when it is created
     },
 
+    flashMessageDefaults: {
+      types: [ 'success', 'error' ]
+    },
+
     showdown: {
       excludeTrailingPunctuationFromURLs: true,
       literalMidWordAsterisks: true,

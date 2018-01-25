@@ -2,6 +2,7 @@ import { test } from 'qunit';
 import moment from 'moment';
 import moduleForAcceptance from 'ember-todo/tests/helpers/module-for-acceptance';
 import { authenticateSession } from 'ember-todo/tests/helpers/ember-simple-auth';
+import { Response } from 'ember-cli-mirage';
 
 function fillInAndPressEnter(selector, text) {
   fillIn(selector, text);
@@ -238,5 +239,26 @@ test('tasks are resorted correctly when editing descriptions', function(assert) 
     assert.contains('.spec-task:eq(0)', 'abc');
     assert.contains('.spec-task:eq(1)', 'xyz');
     assert.contains('.spec-task:eq(2)', 'zzz');
+  });
+});
+
+test('displays an error message if adding a task fails', function(assert) {
+  server.create('list', { listType: 'list', name: 'Other' });
+
+  server.post('/tasks', function() {
+    return new Response(500, { }, {
+      errors: [
+        {
+          status: 500,
+          detail: 'Something went wrong'
+        }
+      ]
+    });
+  });
+  visit('/days');
+  fillInAndPressEnter('.task-list:contains(Other) .spec-new-task', 'This will fail');
+
+  andThen(function() {
+    assert.equal(find('.flash-message.alert').length, 1, 'an error message is displayed');
   });
 });

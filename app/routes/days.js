@@ -1,6 +1,7 @@
 import { hash } from 'rsvp';
 import Ember from 'ember';
 import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
 import moment from 'moment';
 import { task, timeout } from 'ember-concurrency';
 import AuthenticatedRouteMixin from 'ember-simple-auth/mixins/authenticated-route-mixin';
@@ -15,6 +16,8 @@ function datesAround(date) {
 }
 
 export default Route.extend(AuthenticatedRouteMixin, {
+  flashMessages: service(),
+
   queryParams: {
     date: { refreshModel: true }
   },
@@ -52,7 +55,7 @@ export default Route.extend(AuthenticatedRouteMixin, {
       }
     })
       .then((results) => this.get('controller.model.days').addObjects(results))
-      .catch((err) => Ember.Logger.assert(false, `Failed to fetch days: ${err}`));
+      .catch((err) => this.get('flashMessages').error(`Failed to fetch days: ${err}`));
 
     this.get('pollForChanges').perform();
   }).on('activate').cancelOn('deactivate').restartable(),
