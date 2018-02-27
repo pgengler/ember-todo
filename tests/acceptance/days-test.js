@@ -215,7 +215,7 @@ module('Acceptance | Days', function(hooks) {
     assert.deepEqual(displayedTasks, [ 'abc', 'xyz', 'zzz' ], 'after editing a task, alphabetical order is preserved');
   });
 
-  test('displays an error message if adding a task fails', async function(assert) {
+  test('handles when adding a task fails', async function(assert) {
     server.create('list', { listType: 'list', name: 'Other' });
 
     server.post('/tasks', function() {
@@ -232,5 +232,6 @@ module('Acceptance | Days', function(hooks) {
     await fillInAndPressEnter('.task-list[data-test-list-name="Other"] .spec-new-task', 'This will fail');
 
     assert.dom('.flash-message.alert').exists('an error message is displayed');
+    assert.dom('.task.error').exists('task is displayed with the "error" class');
   });
 });

@@ -6,11 +6,14 @@ export default Component.extend({
   tagName: 'li',
   editDesciption: oneWay('task.description'),
 
+  editingStart() { /* noop */ },
+  editingEnd() { /* noop */ },
+
   editable: true,
   isEditing: false,
 
   classNames: [ 'task' ],
-  classNameBindings: [ 'task.isDone:done', 'isEditing:editing' ],
+  classNameBindings: [ 'task.isDone:done', 'isEditing:editing', 'task.isError:error', 'task.isNew:pending' ],
   attributeBindings: [ 'draggable' ],
   draggable: 'true',
 

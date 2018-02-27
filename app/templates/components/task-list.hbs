@@ -7,7 +7,7 @@
     {{single-task task=task class="spec-task" editingStart=editingStart editingEnd=editingEnd}}
   {{/each}}
   {{#each sortedPendingTasks as |task|}}
-    {{pending-task task=task class="spec-task"}}
+    {{single-task task=task class="spec-task" editingStart=editingStart editingEnd=editingEnd}}
   {{/each}}
   <li class="task">
     {{elastic-textarea class="new-task spec-new-task" value=newTaskDescription placeholder="Add new task" insert-newline="addTask" escape-press=(action 'clearTextarea')}}

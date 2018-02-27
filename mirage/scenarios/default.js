@@ -1,11 +1,14 @@
-export default function(/* server */) {
+import { Response } from 'ember-cli-mirage';
 
-  /*
-    Seed your development database using your factories.
-    This data will not be loaded in your tests.
-
-    Make sure to define a factory for each model you want to create.
-  */
-
-  // server.createList('post', 10);
+export default function(server) {
+  server.post('/api/v2/tasks', function() {
+    return new Response(500, { }, {
+      errors: [
+        {
+          status: 500,
+          detail: 'Something went wrong'
+        }
+      ]
+    });
+  });
 }
