@@ -5,6 +5,7 @@ export default DS.Model.extend({
   done: DS.attr('boolean'),
   description: DS.attr('string'),
   list: DS.belongsTo('list'),
+  sortOrder: DS.attr('number'),
 
   isDone: computed('done', {
     get() {

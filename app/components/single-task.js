@@ -15,9 +15,11 @@ export default Component.extend({
   isEditing: false,
 
   classNames: [ 'task' ],
-  classNameBindings: [ 'task.isDone:done', 'isEditing:editing', 'task.isError:error', 'task.isNew:pending' ],
-  attributeBindings: [ 'draggable' ],
-  draggable: 'true',
+  classNameBindings: [ 'task.isDone:done', 'isEditing:editing', 'task.isError:error', 'task.isNew:pending', 'draggable' ],
+  attributeBindings: [ 'task.id:data-task-id' ],
+  draggable: computed('task.{isDone,isEditing,isError}', function () {
+    return !(this.get('task.isDone') || this.get('task.isEditing') || this.get('task.isError'));
+  }),
 
   doubleClick() {
     if (this.get('editable')) {
@@ -72,9 +74,9 @@ export default Component.extend({
     }
   },
 
-  dragStart(event) {
-    event.dataTransfer.setData('text/data', this.get('task.id'));
-  },
+  // dragStart(event) {
+  //   event.dataTransfer.setData('text/data', this.get('task.id'));
+  // },
 
   actions: {
     editTask() {

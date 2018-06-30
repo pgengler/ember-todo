@@ -3,8 +3,9 @@ import { next } from '@ember/runloop';
 import { inject as service } from '@ember/service';
 import Component from '@ember/component';
 import DraggableDropzone from '../mixins/draggable-dropzone';
+import Sortable from 'sortablejs';
 
-const taskSorting = [ 'plaintextDescription' ];
+const taskSorting = [ 'sortOrder' ];
 
 export default Component.extend(DraggableDropzone, {
   attributeBindings: [ 'list.name:data-test-list-name' ],
@@ -34,6 +35,41 @@ export default Component.extend(DraggableDropzone, {
 
   didInsertElement() {
     this.$('.task-list-header').on('click', () => this.$('.new-task').focus());
+    let sortable = Sortable.create(this.element.querySelector('ul'), {
+      draggable: '.draggable',
+      setData: (dataTransfer, element) => {
+        dataTransfer.setData('text/data', element.dataset.taskId);
+      },
+      onEnd: (evt) => {
+        console.log('onEnd, event: %O', evt);
+        let element = evt.item;
+        let task = this.get('list.tasks').find((task) => task.get('id') === element.dataset.taskId);
+        let otherTasks = this.get('list.tasks').filter((task) => task.get('id') !== element.dataset.taskId);
+
+        let { oldIndex, newIndex } = evt;
+        let oldPosition = oldIndex + 1;
+        let newPosition = newIndex + 1;
+
+        if (oldPosition === newPosition) return;
+
+        if (oldPosition > newPosition) {
+          // moving toward the front of the list
+          otherTasks.filter((task) => task.get('sortOrder') >= oldPosition).forEach((task) => task.decrementProperty('sortOrder'));
+          otherTasks.filter((task) => task.get('sortOrder') >= newPosition).forEach((task) => task.incrementProperty('sortOrder'));
+        } else {
+          // moving toward the back of the list
+          newPosition--;
+          otherTasks.filter((task) => task.get('sortOrder') >= oldPosition).forEach((task) => task.decrementProperty('sortOrder'));
+          otherTasks.filter((task) => task.get('sortOrder') >= newPosition).forEach((task) => task.incrementProperty('sortOrder'));
+        }
+
+        task.set('sortOrder', newPosition);
+      },
+      onMove: (x, y) => {
+        console.log('onMove, x: %O, y: %O', x, y);
+      }
+    });
+    this.set('sortable', sortable);
   },
 
   willDestroyElement() {
@@ -77,11 +113,11 @@ export default Component.extend(DraggableDropzone, {
     },
 
     dropped(id, event) {
-      let cloningTask = event.ctrlKey ? true : false;
-
-      this.set('dragClass', '');
-
-      this.get('store').findRecord('task', id).then((task) => cloningTask ? this.cloneTask(task) : this.moveTaskToList(task));
+    //   let cloningTask = event.ctrlKey ? true : false;
+    //
+    //   this.set('dragClass', '');
+    //
+    //   this.get('store').findRecord('task', id).then((task) => cloningTask ? this.cloneTask(task) : this.moveTaskToList(task));
     },
 
     dragIn() {
