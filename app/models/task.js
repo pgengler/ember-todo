@@ -1,4 +1,4 @@
-import { computed } from '@ember/object';
+import { computed, observer } from '@ember/object';
 import DS from 'ember-data';
 
 export default DS.Model.extend({
@@ -6,6 +6,10 @@ export default DS.Model.extend({
   description: DS.attr('string'),
   list: DS.belongsTo('list'),
   sortOrder: DS.attr('number'),
+
+  sortOrderChanged: observer('sortOrder', function() {
+    console.log('sort order for "%s" changed to %d', this.get('description'), this.get('sortOrder'));
+  }),
 
   isDone: computed('done', {
     get() {

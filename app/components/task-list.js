@@ -50,23 +50,24 @@ export default Component.extend(DraggableDropzone, {
         let oldPosition = oldIndex + 1;
         let newPosition = newIndex + 1;
 
+        console.log('moving task "%s" from %d to %d', task.get('description'), oldPosition, newPosition);
+
         if (oldPosition === newPosition) return;
 
         if (oldPosition > newPosition) {
           // moving toward the front of the list
           otherTasks.filter((task) => task.get('sortOrder') >= oldPosition).forEach((task) => task.decrementProperty('sortOrder'));
-          otherTasks.filter((task) => task.get('sortOrder') >= newPosition).forEach((task) => task.incrementProperty('sortOrder'));
+          otherTasks.filter((task) => task.get('sortOrder') > newPosition).forEach((task) => task.incrementProperty('sortOrder'));
         } else {
           // moving toward the back of the list
           newPosition--;
           otherTasks.filter((task) => task.get('sortOrder') >= oldPosition).forEach((task) => task.decrementProperty('sortOrder'));
-          otherTasks.filter((task) => task.get('sortOrder') >= newPosition).forEach((task) => task.incrementProperty('sortOrder'));
+          otherTasks.filter((task) => task.get('sortOrder') > newPosition).forEach((task) => task.incrementProperty('sortOrder'));
         }
 
+        console.log('hi...');
+
         task.set('sortOrder', newPosition);
-      },
-      onMove: (x, y) => {
-        console.log('onMove, x: %O, y: %O', x, y);
       }
     });
     this.set('sortable', sortable);
@@ -95,9 +96,11 @@ export default Component.extend(DraggableDropzone, {
         return;
       }
       let list = this.get('list');
+      let position = this.get('list.tasks.length') + 1;
       let task = this.get('store').createRecord('task', {
         description,
-        list
+        list,
+        sortOrder: position
       });
 
       this.set('newTaskDescription', '');
