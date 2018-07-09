@@ -41,7 +41,6 @@ export default Component.extend(DraggableDropzone, {
         dataTransfer.setData('text/data', element.dataset.taskId);
       },
       onEnd: (evt) => {
-        console.log('onEnd, event: %O', evt);
         let element = evt.item;
         let task = this.get('list.tasks').find((task) => task.get('id') === element.dataset.taskId);
         let otherTasks = this.get('list.tasks').filter((task) => task.get('id') !== element.dataset.taskId);
@@ -50,24 +49,17 @@ export default Component.extend(DraggableDropzone, {
         let oldPosition = oldIndex + 1;
         let newPosition = newIndex + 1;
 
-        console.log('moving task "%s" from %d to %d', task.get('description'), oldPosition, newPosition);
-
         if (oldPosition === newPosition) return;
 
-        if (oldPosition > newPosition) {
-          // moving toward the front of the list
-          otherTasks.filter((task) => task.get('sortOrder') >= oldPosition).forEach((task) => task.decrementProperty('sortOrder'));
-          otherTasks.filter((task) => task.get('sortOrder') > newPosition).forEach((task) => task.incrementProperty('sortOrder'));
-        } else {
-          // moving toward the back of the list
+        if (oldPosition < newPosition) {
           newPosition--;
-          otherTasks.filter((task) => task.get('sortOrder') >= oldPosition).forEach((task) => task.decrementProperty('sortOrder'));
-          otherTasks.filter((task) => task.get('sortOrder') > newPosition).forEach((task) => task.incrementProperty('sortOrder'));
         }
 
-        console.log('hi...');
-
+        otherTasks.filter((task) => task.get('sortOrder') >= oldPosition).invoke('decrementProperty', 'sortOrder');
+        otherTasks.filter((task) => task.get('sortOrder') > newPosition).forEach((task) => task.incrementProperty('sortOrder'));
         task.set('sortOrder', newPosition);
+
+        this.get('list.tasks').invoke('save');
       }
     });
     this.set('sortable', sortable);
