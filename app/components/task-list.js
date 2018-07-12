@@ -35,31 +35,38 @@ export default Component.extend(DraggableDropzone, {
 
   didInsertElement() {
     this.$('.task-list-header').on('click', () => this.$('.new-task').focus());
+
     let sortable = Sortable.create(this.element.querySelector('ul'), {
       draggable: '.draggable',
-      setData: (dataTransfer, element) => {
-        dataTransfer.setData('text/data', element.dataset.taskId);
+      group: {
+        name: 'a list',
+        pull(a, b, c, evt) {
+          console.log('pull evt: %O', evt);
+          return evt.ctrlKey ? 'clone' : true;
+        }
       },
       onEnd: (evt) => {
-        let element = evt.item;
-        let task = this.get('list.tasks').find((task) => task.get('id') === element.dataset.taskId);
-        let otherTasks = this.get('list.tasks').filter((task) => task.get('id') !== element.dataset.taskId);
+        let { from, to } = evt;
+        let fromListId = from.dataset.listId;
+        let toListId = to.dataset.listId;
 
         let { oldIndex, newIndex } = evt;
         let oldPosition = oldIndex + 1;
         let newPosition = newIndex + 1;
 
-        if (oldPosition === newPosition) return;
+        let element = evt.item;
+        let task = this.list.get('tasks').find((task) => task.get('id') === element.dataset.taskId);
 
-        if (oldPosition < newPosition) {
-          newPosition--;
+        if (fromListId !== toListId) {
+          console.log('evt: %O', evt);
+          if (evt.ctrlKey) {
+            throw "clone!"
+          } else {
+            this.moveTaskToDifferentList(task, toListId, newPosition);
+          }
+        } else {
+          this.changePositionOfTask(task, oldPosition, newPosition);
         }
-
-        otherTasks.filter((task) => task.get('sortOrder') >= oldPosition).invoke('decrementProperty', 'sortOrder');
-        otherTasks.filter((task) => task.get('sortOrder') > newPosition).forEach((task) => task.incrementProperty('sortOrder'));
-        task.set('sortOrder', newPosition);
-
-        this.get('list.tasks').invoke('save');
       }
     });
     this.set('sortable', sortable);
@@ -69,10 +76,52 @@ export default Component.extend(DraggableDropzone, {
     this.$('.task-list-header').off('click');
   },
 
+  changePositionOfTask(task, oldPosition, newPosition) {
+    if (oldPosition === newPosition) return;
+
+    let thisTaskId = task.id;
+    let otherTasks = this.list.get('tasks').filter((task) => task.id !== thisTaskId);
+
+    if (oldPosition < newPosition) {
+      newPosition--;
+    }
+
+    otherTasks.filter((task) => task.sortOrder >= oldPosition).invoke('decrementProperty', 'sortOrder');
+    otherTasks.filter((task) => task.sortOrder > newPosition).invoke('incrementProperty', 'sortOrder');
+    task.set('sortOrder', newPosition);
+
+    this.get('list.tasks').invoke('save');
+  },
+
+  moveTaskToDifferentList(task, targetListId, position) {
+    let currentPosition = task.sortOrder;
+
+    let targetList = this.store.peekRecord('list', targetListId);
+
+    // move tasks in current list up one position
+    let tasksInOldList = this.list.get('tasks').filter((task) => task.sortOrder > currentPosition);
+    tasksInOldList.invoke('decrementProperty', 'sortOrder');
+
+    // make room in new list
+    let tasksInNewList = targetList.get('tasks').filter((task) => task.sortOrder >= position);
+    tasksInNewList.invoke('incrementProperty', 'sortOrder');
+
+    // set list & position for task
+    task.setProperties({
+      list: targetList,
+      sortOrder: position
+    });
+
+    // save everything that changed
+    task.save();
+    tasksInOldList.invoke('save');
+    tasksInNewList.invoke('save');
+  },
+
   cloneTask(task) {
-    let newTask = this.get('store').createRecord('task', {
-      list: this.get('list'),
-      description: task.get('description')
+    let newTask = this.store.createRecord('task', {
+      list: this.list,
+      description: task.description
     });
     newTask.save();
   },
@@ -83,13 +132,13 @@ export default Component.extend(DraggableDropzone, {
 
   actions: {
     addTask() {
-      let description = this.get('newTaskDescription').trim();
+      let description = this.newTaskDescription.trim();
       if (!description) {
         return;
       }
       let list = this.get('list');
       let position = this.get('list.tasks.length') + 1;
-      let task = this.get('store').createRecord('task', {
+      let task = this.store.createRecord('task', {
         description,
         list,
         sortOrder: position
@@ -99,12 +148,12 @@ export default Component.extend(DraggableDropzone, {
 
       next(() => {
         task.save()
-          .catch((err) => this.get('flashMessages').error(err));
+          .catch((err) => this.flashMessages.error(err));
       });
     },
 
     clearTextarea() {
-      this.set('newTaskDescription', '');
+      this.newTaskDescription = '';
     },
 
     dropped(id, event) {

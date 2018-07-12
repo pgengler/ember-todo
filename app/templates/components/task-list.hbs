@@ -1,5 +1,5 @@
 {{component headerComponent list=list}}
-<ul>
+<ul data-list-id={{list.id}}>
   {{#each sortedUnfinishedTasks as |task|}}
     {{single-task task=task class="spec-task" editingStart=editingStart editingEnd=editingEnd}}
   {{/each}}
